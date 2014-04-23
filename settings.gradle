@@ -1,0 +1,9 @@
+rootProject.name = 'mountain'
+
+def String[] modules = [
+    'mountain-shared',
+    'mountain-web-resources',
+	'mountain'
+]
+
+include modules
