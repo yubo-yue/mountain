@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -18,43 +19,41 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
+@ComponentScan(basePackages = { "com.mountain.service",
+		"com.mountain.repository", "com.mountain.domain.support" })
 public class InfrastructureContextConfiguration {
 	@Autowired
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
-	
+
 	@Bean
-	public FactoryBean<EntityManagerFactory> entityManagerFactory()
-	{
+	public FactoryBean<EntityManagerFactory> entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
 		emfb.setDataSource(this.dataSource);
 		emfb.setJpaVendorAdapter(jpaVendorAdapter());
 		return emfb;
 	}
-	
+
 	@Bean
-	public JpaVendorAdapter jpaVendorAdapter()
-	{
+	public JpaVendorAdapter jpaVendorAdapter() {
 		return new HibernateJpaVendorAdapter();
 	}
-	
+
 	@Bean
-	public PlatformTransactionManager transactionManager()
-	{
+	public PlatformTransactionManager transactionManager() {
 		JpaTransactionManager txManager = new JpaTransactionManager();
 		txManager.setEntityManagerFactory(this.entityManagerFactory);
 		txManager.setDataSource(this.dataSource);
 		return txManager;
 	}
-	
+
 	@Bean
-	public DataSource dataSource()
-	{
+	public DataSource dataSource() {
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		builder.setType(EmbeddedDatabaseType.H2);
 		return builder.build();
 	}
-	
+
 }
